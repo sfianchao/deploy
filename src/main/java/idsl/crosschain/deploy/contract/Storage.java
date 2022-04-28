@@ -1,21 +1,30 @@
 package idsl.crosschain.deploy.contract;
 
+import io.reactivex.Flowable;
+import org.web3j.abi.EventEncoder;
 import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.RemoteFunctionCall;
+import org.web3j.protocol.core.methods.request.EthFilter;
+import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.Contract;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>Auto generated code.
@@ -33,6 +42,10 @@ public class Storage extends Contract {
     public static final String FUNC_RETRIEVE = "retrieve";
 
     public static final String FUNC_STORE = "store";
+
+    public static final Event MODIFIED_EVENT = new Event("Modified",
+            Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>(true) {}, new TypeReference<Utf8String>(true) {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}));
+    ;
 
     @Deprecated
     protected Storage(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
@@ -102,4 +115,43 @@ public class Storage extends Contract {
     public static RemoteCall<Storage> deploy(Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
         return deployRemoteCall(Storage.class, web3j, transactionManager, gasPrice, gasLimit, BINARY, "");
     }
+
+    // flowable event listener
+    public List<ModifiedEventResponse> getModifiedEvents(TransactionReceipt transactionReceipt) {
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(MODIFIED_EVENT, transactionReceipt);
+        ArrayList<ModifiedEventResponse> responses = new ArrayList<ModifiedEventResponse>(valueList.size());
+        for (Contract.EventValuesWithLog eventValues : valueList) {
+            ModifiedEventResponse typedResponse = new ModifiedEventResponse();
+            typedResponse.log = eventValues.getLog();
+            typedResponse.oldGreetingIdx = (byte[]) eventValues.getIndexedValues().get(0).getValue();
+            typedResponse.newGreetingIdx = (byte[]) eventValues.getIndexedValues().get(1).getValue();
+            typedResponse.oldGreeting = (String) eventValues.getNonIndexedValues().get(0).getValue();
+            typedResponse.newGreeting = (String) eventValues.getNonIndexedValues().get(1).getValue();
+            responses.add(typedResponse);
+        }
+        return responses;
+    }
+
+    public Flowable<ModifiedEventResponse> modifiedEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, ModifiedEventResponse>() {
+            @Override
+            public ModifiedEventResponse apply(Log log) {
+                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(MODIFIED_EVENT, log);
+                ModifiedEventResponse typedResponse = new ModifiedEventResponse();
+                typedResponse.log = log;
+                typedResponse.oldGreetingIdx = (byte[]) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.newGreetingIdx = (byte[]) eventValues.getIndexedValues().get(1).getValue();
+                typedResponse.oldGreeting = (String) eventValues.getNonIndexedValues().get(0).getValue();
+                typedResponse.newGreeting = (String) eventValues.getNonIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
+    public Flowable<ModifiedEventResponse> modifiedEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
+        EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
+        filter.addSingleTopic(EventEncoder.encode(MODIFIED_EVENT));
+        return modifiedEventFlowable(filter);
+    }
+
 }

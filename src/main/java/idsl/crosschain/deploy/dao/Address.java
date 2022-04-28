@@ -9,13 +9,15 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-public class User {
+public class Address {
 
     @GenericGenerator(name = "generator", strategy = "guid")
     @GeneratedValue(generator = "generator")
     @Id
     private String id;
 
-    private String name;
+    private String contractAddress;
+
+    private String walletAddress;
 
 }

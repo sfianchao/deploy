@@ -2,6 +2,6 @@ package idsl.crosschain.deploy.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, String>{
+public interface AddressRepository extends JpaRepository<Address, String> {
 
 }
