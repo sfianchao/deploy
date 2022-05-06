@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.quorum.Quorum;
 import org.web3j.tx.gas.DefaultGasProvider;
@@ -21,10 +20,14 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Service
-public class LoadServiceImpl implements LoadService{
+public class LoadServiceImpl implements LoadService {
 
     @Autowired
-//    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    public LoadServiceImpl() {
+
+    }
 
     public String loadData() {
 
@@ -55,7 +58,7 @@ public class LoadServiceImpl implements LoadService{
             storedValue = input.greet().send();
             log.info("stored value: {}", storedValue);
 
-//            kafkaTemplate.send("crosschain", storedValue);
+            kafkaTemplate.send("crosschain", storedValue);
 
         } catch (Exception e) {
             e.printStackTrace();

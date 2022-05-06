@@ -38,7 +38,11 @@ public class Input extends Contract {
     public static final String FUNC_GREET = "greet";
 
     public static final Event MODIFIED_EVENT = new Event("Modified",
-            Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>(true) {}, new TypeReference<Utf8String>(true) {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}));
+            Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>(true) {
+            }, new TypeReference<Utf8String>(true) {
+            }, new TypeReference<Utf8String>() {
+            }, new TypeReference<Utf8String>() {
+            }));
     ;
 
     @Deprecated
@@ -78,7 +82,8 @@ public class Input extends Contract {
     public RemoteFunctionCall<String> greet() {
         final Function function = new Function(FUNC_GREET,
                 Arrays.<Type>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {
+                }));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 

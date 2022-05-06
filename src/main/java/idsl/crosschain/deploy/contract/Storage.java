@@ -44,7 +44,11 @@ public class Storage extends Contract {
     public static final String FUNC_STORE = "store";
 
     public static final Event MODIFIED_EVENT = new Event("Modified",
-            Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>(true) {}, new TypeReference<Utf8String>(true) {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}));
+            Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>(true) {
+            }, new TypeReference<Utf8String>(true) {
+            }, new TypeReference<Utf8String>() {
+            }, new TypeReference<Utf8String>() {
+            }));
     ;
 
     @Deprecated
@@ -68,7 +72,8 @@ public class Storage extends Contract {
     public RemoteFunctionCall<BigInteger> retrieve() {
         final Function function = new Function(FUNC_RETRIEVE,
                 Arrays.<Type>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
+                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {
+                }));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 

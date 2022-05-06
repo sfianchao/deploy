@@ -1,10 +1,10 @@
 package idsl.crosschain.deploy.service;
 
 import idsl.crosschain.deploy.contract.Storage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
-import org.web3j.protocol.core.methods.response.EthFilter;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.quorum.Quorum;
@@ -14,8 +14,9 @@ import org.web3j.tx.gas.StaticGasProvider;
 import java.io.File;
 import java.math.BigInteger;
 
+@Slf4j
 @Service
-public class TestServiceImpl implements TestService{
+public class TestServiceImpl implements TestService {
 
     public String testConnection() {
 
