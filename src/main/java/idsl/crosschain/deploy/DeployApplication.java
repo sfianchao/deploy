@@ -1,8 +1,11 @@
 package idsl.crosschain.deploy;
 
 import idsl.crosschain.deploy.contract.Input;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
@@ -14,8 +17,9 @@ import org.web3j.tx.gas.StaticGasProvider;
 import java.io.File;
 import java.math.BigInteger;
 
-//@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-@SpringBootApplication
+@Slf4j
+//@SpringBootApplication
+@SpringBootApplication(exclude = {KafkaAutoConfiguration.class, DataSourceAutoConfiguration.class})
 public class DeployApplication {
 
     public static void main(String[] args) {
