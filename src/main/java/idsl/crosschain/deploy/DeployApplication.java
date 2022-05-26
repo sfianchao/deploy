@@ -31,7 +31,7 @@ public class DeployApplication {
             String clientVersion = web3ClientVersion.getWeb3ClientVersion();
             System.out.println(clientVersion);
 
-            Credentials credentials = WalletUtils.loadCredentials("node1", new File("C:/Users/hmnic/blockchain/wallets/wallet1"));
+            Credentials credentials = WalletUtils.loadCredentials("node1", new File("./wallets/wallet1"));
             String address = credentials.getAddress();
             System.out.println("wallet address: " + address);
 
