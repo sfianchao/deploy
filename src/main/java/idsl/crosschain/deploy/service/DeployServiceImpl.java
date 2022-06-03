@@ -1,7 +1,6 @@
 package idsl.crosschain.deploy.service;
 
 import com.alibaba.fastjson2.JSONObject;
-import idsl.crosschain.deploy.model.QuorumInfo;
 import idsl.crosschain.deploy.util.StatusContractUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

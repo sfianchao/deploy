@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 @Slf4j
 @Data
@@ -37,7 +36,7 @@ public class StatusContractUtil extends ContractUtil {
         try {
             Status status = Status.deploy(quorumInfo.getQuorum(), quorumInfo.getCredentials(), quorumInfo.getGasProvider()).send();
             contractAddress = status.getContractAddress();
-            log.info("[{}] deployed contract address: {}", LocalDateTime.now().format(dateTimeFormatter), contractAddress);
+            log.info("[{}] deployed contract address: {}", chainBuilder, contractAddress);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
@@ -50,10 +49,8 @@ public class StatusContractUtil extends ContractUtil {
 
     @Override
     public JSONObject load(String chainBuilder) {
-
         return null;
     }
-
 
     public JSONObject setTxStatus(String chainBuilder, String contractAddress, TxStatus txStatus) {
 
