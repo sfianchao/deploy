@@ -8,7 +8,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.tx.gas.StaticGasProvider;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -31,10 +36,13 @@ public class StatusContractUtil extends ContractUtil {
         JSONObject jsonObject = new JSONObject();
 
         QuorumInfo quorumInfo = (QuorumInfo) applicationContext.getBean(chainBuilder);
+        quorumInfo.setGasProvider(new StaticGasProvider(BigInteger.ZERO, DefaultGasProvider.GAS_LIMIT));
 
         // deploy contract
         try {
-            Status status = Status.deploy(quorumInfo.getQuorum(), quorumInfo.getCredentials(), quorumInfo.getGasProvider()).send();
+            TransactionManager transactionManager = new RawTransactionManager(
+                    quorumInfo.getQuorum(), quorumInfo.getCredentials(), 10);
+            Status status = Status.deploy(quorumInfo.getQuorum(), transactionManager, quorumInfo.getGasProvider()).send();
             contractAddress = status.getContractAddress();
             log.info("[{}] deployed contract address: {}", chainBuilder, contractAddress);
         } catch (Exception e) {
@@ -57,7 +65,9 @@ public class StatusContractUtil extends ContractUtil {
         JSONObject jsonObject = new JSONObject();
 
         QuorumInfo quorumInfo = (QuorumInfo) applicationContext.getBean(chainBuilder);
-        Status status = Status.load(contractAddress, quorumInfo.getQuorum(), quorumInfo.getCredentials(), quorumInfo.getGasProvider());
+        TransactionManager transactionManager = new RawTransactionManager(
+                quorumInfo.getQuorum(), quorumInfo.getCredentials(), 10);
+        Status status = Status.load(contractAddress, quorumInfo.getQuorum(), transactionManager, quorumInfo.getGasProvider());
         log.info("current contract address: {}", status.getContractAddress());
 
         try {
@@ -84,7 +94,9 @@ public class StatusContractUtil extends ContractUtil {
         String currentStatus = null;
 
         QuorumInfo quorumInfo = (QuorumInfo) applicationContext.getBean(chainBuilder);
-        Status status = Status.load(contractAddress, quorumInfo.getQuorum(), quorumInfo.getCredentials(), quorumInfo.getGasProvider());
+        TransactionManager transactionManager = new RawTransactionManager(
+                quorumInfo.getQuorum(), quorumInfo.getCredentials(), 10);
+        Status status = Status.load(contractAddress, quorumInfo.getQuorum(), transactionManager, quorumInfo.getGasProvider());
         log.info("current contract address: {}", status.getContractAddress());
 
         try {
@@ -106,7 +118,9 @@ public class StatusContractUtil extends ContractUtil {
         JSONObject jsonObject = new JSONObject();
 
         QuorumInfo quorumInfo = (QuorumInfo) applicationContext.getBean(chainBuilder);
-        Status status = Status.load(contractAddress, quorumInfo.getQuorum(), quorumInfo.getCredentials(), quorumInfo.getGasProvider());
+        TransactionManager transactionManager = new RawTransactionManager(
+                quorumInfo.getQuorum(), quorumInfo.getCredentials(), 10);
+        Status status = Status.load(contractAddress, quorumInfo.getQuorum(), transactionManager, quorumInfo.getGasProvider());
         log.info("current contract address: {}", status.getContractAddress());
 
         try {

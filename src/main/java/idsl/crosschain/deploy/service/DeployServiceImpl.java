@@ -19,11 +19,11 @@ public class DeployServiceImpl implements DeployService {
     }
 
     private String chainBuilderSelector(String chainName) {
-        if (chainName.equalsIgnoreCase("A")) {
+        if (chainName.equalsIgnoreCase("src")) {
             return "sourceChainBuilder";
-        } else if (chainName.equalsIgnoreCase("B")) {
+        } else if (chainName.equalsIgnoreCase("dest")) {
             return "destinationChainBuilder";
-        } else if (chainName.equalsIgnoreCase("Relay")) {
+        } else if (chainName.equalsIgnoreCase("relay")) {
             return "relayChainBuilder";
         } else {
             return null;

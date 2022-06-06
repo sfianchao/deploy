@@ -38,7 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("src chain info: {}", srcRoutingInfo);
 
         // get relay chain bridgeNode
-        String relay_url = "http://localhost:8081/bridge-node/get/Relay";
+        String relay_url = "http://localhost:8081/bridge-node/get/relay";
         RoutingInfo relayRoutingInfo = restTemplate.getForObject(relay_url, RoutingInfo.class);
         log.info("relay chain info: {}", relayRoutingInfo);
 
@@ -82,7 +82,7 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("5. [relay] check tx status: {}", checkRes.getString("msg"));
 
         // get relay tx status
-        String relay_tx_url = "http://localhost:8082/sync/relay/status/Relay";
+        String relay_tx_url = "http://localhost:8082/sync/relay/status/relay";
         JSONObject relayRes = restTemplate.getForObject(relay_tx_url, JSONObject.class);
         log.info("6. [relay] final tx status: {}", relayRes.getString("txStatus"));
 
