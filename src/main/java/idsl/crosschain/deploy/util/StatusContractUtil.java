@@ -41,7 +41,7 @@ public class StatusContractUtil extends ContractUtil {
         // deploy contract
         try {
             TransactionManager transactionManager = new RawTransactionManager(
-                    quorumInfo.getQuorum(), quorumInfo.getCredentials(), 10);
+                    quorumInfo.getQuorum(), quorumInfo.getCredentials(), chainId);
             Status status = Status.deploy(quorumInfo.getQuorum(), transactionManager, quorumInfo.getGasProvider()).send();
             contractAddress = status.getContractAddress();
             log.info("[{}] deployed contract address: {}", chainBuilder, contractAddress);
@@ -60,22 +60,22 @@ public class StatusContractUtil extends ContractUtil {
         return null;
     }
 
-    public JSONObject setTxStatus(String chainBuilder, String contractAddress, TxStatus txStatus) {
+    public JSONObject setTxStatus(String chainBuilder, String contractAddress, String chainName, TxStatus txStatus) {
 
         JSONObject jsonObject = new JSONObject();
 
         QuorumInfo quorumInfo = (QuorumInfo) applicationContext.getBean(chainBuilder);
         TransactionManager transactionManager = new RawTransactionManager(
-                quorumInfo.getQuorum(), quorumInfo.getCredentials(), 10);
+                quorumInfo.getQuorum(), quorumInfo.getCredentials(), chainId);
         Status status = Status.load(contractAddress, quorumInfo.getQuorum(), transactionManager, quorumInfo.getGasProvider());
         log.info("current contract address: {}", status.getContractAddress());
 
         try {
             if (txStatus.equals(TxStatus.prepare)) {
-                status.setStatusToPrepare("A").send();
+                status.setStatusToPrepare("txId", chainName).send();
                 jsonObject.put("msg", String.format("set status[%s] success!", txStatus.toString()));
             } else if (txStatus.equals(TxStatus.commit)) {
-                status.setStatusToCommit("A").send();
+                status.setStatusToCommit("txId", chainName).send();
                 jsonObject.put("msg", String.format("set status[%s] success!", txStatus.toString()));
             } else {
                 log.info("tx status error!");
@@ -95,7 +95,7 @@ public class StatusContractUtil extends ContractUtil {
 
         QuorumInfo quorumInfo = (QuorumInfo) applicationContext.getBean(chainBuilder);
         TransactionManager transactionManager = new RawTransactionManager(
-                quorumInfo.getQuorum(), quorumInfo.getCredentials(), 10);
+                quorumInfo.getQuorum(), quorumInfo.getCredentials(), chainId);
         Status status = Status.load(contractAddress, quorumInfo.getQuorum(), transactionManager, quorumInfo.getGasProvider());
         log.info("current contract address: {}", status.getContractAddress());
 
@@ -119,12 +119,12 @@ public class StatusContractUtil extends ContractUtil {
 
         QuorumInfo quorumInfo = (QuorumInfo) applicationContext.getBean(chainBuilder);
         TransactionManager transactionManager = new RawTransactionManager(
-                quorumInfo.getQuorum(), quorumInfo.getCredentials(), 10);
+                quorumInfo.getQuorum(), quorumInfo.getCredentials(), chainId);
         Status status = Status.load(contractAddress, quorumInfo.getQuorum(), transactionManager, quorumInfo.getGasProvider());
         log.info("current contract address: {}", status.getContractAddress());
 
         try {
-            status.checkTxStatus().send();
+            status.checkTxStatus("txId").send();
             log.info("check tx status success!");
             jsonObject.put("msg", "check tx status success!");
         } catch (Exception e) {

@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class ContractUtil {
 
+    @Value("${quorum.chain.id}")
+    public Long chainId;
+
     @Value("${contract.address.source}")
     public String SOURCE_CONTRACT_ADDRESS;
 

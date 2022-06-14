@@ -10,12 +10,20 @@ import idsl.crosschain.deploy.dto.response.LaunchTxResponse;
 import idsl.crosschain.deploy.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import javax.xml.bind.annotation.XmlEnumValue;
 
 @Slf4j
 @Service
 public class TransactionServiceImpl implements TransactionService {
+
+    @Value("${quorum.relay.ip}")
+    private String relayIp;
+
+    private String localhost = "http://localhost:9091";
 
     private ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
@@ -33,17 +41,17 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("1. Launch tx from [{}] to [{}]", srcChainName, destChainName);
 
         // get src chain bridgeNode
-        String src_url = "http://localhost:8081/bridge-node/get/" + srcChainName;
+        String src_url = localhost + "/bridge-node/get/" + srcChainName;
         RoutingInfo srcRoutingInfo = restTemplate.getForObject(src_url, RoutingInfo.class);
         log.info("src chain info: {}", srcRoutingInfo);
 
         // get relay chain bridgeNode
-        String relay_url = "http://localhost:8081/bridge-node/get/relay";
+        String relay_url = localhost + "/bridge-node/get/relay";
         RoutingInfo relayRoutingInfo = restTemplate.getForObject(relay_url, RoutingInfo.class);
         log.info("relay chain info: {}", relayRoutingInfo);
 
         // get dest chain bridgeNode
-        String url = "http://localhost:8081/bridge-node/get/" + destChainName;
+        String url = localhost + "/bridge-node/get/" + destChainName;
         RoutingInfo destRoutingInfo = restTemplate.getForObject(url, RoutingInfo.class);
         log.info("dest chain info: {}", destRoutingInfo);
 
@@ -56,12 +64,12 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("dataCommon: {}", dataCommon);
 
         // set src tx status to "prepare"
-        String src_tx_url = "http://localhost:8082/contract/status/set/" + srcChainName + "/" + TxStatus.prepare;
+        String src_tx_url = "http://localhost:9092/contract/status/set/" + srcChainName + "/" + TxStatus.prepare;
         JSONObject srcTxStatus = restTemplate.postForObject(src_tx_url, null, JSONObject.class);
         log.info("2. src tx status: {}", srcTxStatus.get("msg"));
 
         // send tx to dest chain
-        String send_url = "http://localhost:8082/transfer/send";
+        String send_url = "http://localhost:9092/transfer/send";
         SendRequest sendRequest = new SendRequest();
         sendRequest.setDataCommon(dataCommon);
         sendRequest.setRoutingCommon(routingCommon);
@@ -72,17 +80,17 @@ public class TransactionServiceImpl implements TransactionService {
 
         // notify status to relay chain to "prepare"
         NotifyRequest notifyRequest = new NotifyRequest("txId", srcChainName, TxStatus.prepare.toString(), "proof");
-        String notify_relay_url = "http://localhost:8082/transfer/status/notify";
+        String notify_relay_url = "http://localhost:9092/transfer/status/notify";
         JSONObject relayTxStatus = restTemplate.postForObject(notify_relay_url, notifyRequest, JSONObject.class);
         log.info("4. [relay] {} tx status: {}", srcChainName, relayTxStatus.getString("msg"));
 
         // check relay chain tx status
-        String check_relay_url = "http://localhost:8082/sync/status/check";
+        String check_relay_url = "http://localhost:9092/sync/status/check";
         JSONObject checkRes = restTemplate.postForObject(check_relay_url, null, JSONObject.class);
         log.info("5. [relay] check tx status: {}", checkRes.getString("msg"));
 
         // get relay tx status
-        String relay_tx_url = "http://localhost:8082/sync/relay/status/relay";
+        String relay_tx_url = "http://localhost:9092/sync/relay/status/relay";
         JSONObject relayRes = restTemplate.getForObject(relay_tx_url, JSONObject.class);
         log.info("6. [relay] final tx status: {}", relayRes.getString("txStatus"));
 
