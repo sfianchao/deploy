@@ -5,7 +5,7 @@ FROM maven:3.8.4-jdk-8 AS MAVEN_BUILD
 COPY ./ ./
  
 # package java application code
-RUN mvn clean package
+RUN mvn clean install
 
 # the second stage of image build will use open jdk 11
 FROM openjdk:8
