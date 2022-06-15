@@ -49,17 +49,17 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("1. Launch tx from [{}] to [{}]", srcChainName, destChainName);
 
         // get src chain bridgeNode
-        String src_url = srcIp + ":" + routingServicePort + "/bridge-node/get/" + srcChainName;
+        String src_url = relayIp + ":" + routingServicePort + "/bridge-node/get/" + srcChainName;
         RoutingInfo srcRoutingInfo = restTemplate.getForObject(src_url, RoutingInfo.class);
         log.info("src chain info: {}", srcRoutingInfo);
 
         // get relay chain bridgeNode
-        String relay_url = srcIp + ":" + routingServicePort + "/bridge-node/get/relay";
+        String relay_url = relayIp + ":" + routingServicePort + "/bridge-node/get/relay";
         RoutingInfo relayRoutingInfo = restTemplate.getForObject(relay_url, RoutingInfo.class);
         log.info("relay chain info: {}", relayRoutingInfo);
 
         // get dest chain bridgeNode
-        String url = srcIp + ":" + routingServicePort + "/bridge-node/get/" + destChainName;
+        String url = relayIp + ":" + routingServicePort + "/bridge-node/get/" + destChainName;
         RoutingInfo destRoutingInfo = restTemplate.getForObject(url, RoutingInfo.class);
         log.info("dest chain info: {}", destRoutingInfo);
 
