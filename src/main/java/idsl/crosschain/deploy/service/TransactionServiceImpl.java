@@ -28,6 +28,11 @@ public class TransactionServiceImpl implements TransactionService {
     private String relayIDSLInternalIp = "http://192.168.66.74";
     private String destIDSLInternalIp = "http://192.168.66.75";
 
+    private String srcIp = "http://140.118.9.225";
+    private String relayIp = "http://140.118.9.226";
+    private String destIp = "http://140.118.9.227";
+
+
     private ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
@@ -54,7 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("relay chain info: {}", relayRoutingInfo);
 
         // get dest chain bridgeNode
-        String url = destIDSLInternalIp + ":" + routingServicePort + "/bridge-node/get/" + destChainName;
+        String url = relayIDSLInternalIp + ":" + routingServicePort + "/bridge-node/get/" + destChainName;
         RoutingInfo destRoutingInfo = restTemplate.getForObject(url, RoutingInfo.class);
         log.info("dest chain info: {}", destRoutingInfo);
 
