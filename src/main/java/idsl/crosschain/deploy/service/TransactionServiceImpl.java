@@ -49,17 +49,17 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("1. Launch tx from [{}] to [{}]", srcChainName, destChainName);
 
         // get src chain bridgeNode
-        String src_url = relayIDSLInternalIp + ":" + routingServicePort + "/bridge-node/get/" + srcChainName;
+        String src_url = srcIp + ":" + routingServicePort + "/bridge-node/get/" + srcChainName;
         RoutingInfo srcRoutingInfo = restTemplate.getForObject(src_url, RoutingInfo.class);
         log.info("src chain info: {}", srcRoutingInfo);
 
         // get relay chain bridgeNode
-        String relay_url = relayIDSLInternalIp + ":" + routingServicePort + "/bridge-node/get/relay";
+        String relay_url = srcIp + ":" + routingServicePort + "/bridge-node/get/relay";
         RoutingInfo relayRoutingInfo = restTemplate.getForObject(relay_url, RoutingInfo.class);
         log.info("relay chain info: {}", relayRoutingInfo);
 
         // get dest chain bridgeNode
-        String url = relayIDSLInternalIp + ":" + routingServicePort + "/bridge-node/get/" + destChainName;
+        String url = srcIp + ":" + routingServicePort + "/bridge-node/get/" + destChainName;
         RoutingInfo destRoutingInfo = restTemplate.getForObject(url, RoutingInfo.class);
         log.info("dest chain info: {}", destRoutingInfo);
 
@@ -72,12 +72,12 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("dataCommon: {}", dataCommon);
 
         // set src tx status to "prepare"
-        String src_tx_url = srcIDSLInternalIp + ":" + transferServicePort + "/contract/status/set/" + srcChainName + "/" + TxStatus.prepare;
+        String src_tx_url = srcIp + ":" + transferServicePort + "/contract/status/set/" + srcChainName + "/" + TxStatus.prepare;
         JSONObject srcTxStatus = restTemplate.postForObject(src_tx_url, null, JSONObject.class);
         log.info("2. src tx status: {}", srcTxStatus.get("msg"));
 
         // send tx to dest chain
-        String send_url = srcIDSLInternalIp + ":" + transferServicePort + "/transfer/send";
+        String send_url = srcIp + ":" + transferServicePort + "/transfer/send";
         SendRequest sendRequest = new SendRequest();
         sendRequest.setDataCommon(dataCommon);
         sendRequest.setRoutingCommon(routingCommon);
@@ -88,17 +88,17 @@ public class TransactionServiceImpl implements TransactionService {
 
         // notify status to relay chain to "prepare"
         NotifyRequest notifyRequest = new NotifyRequest("txId", srcChainName, TxStatus.prepare.toString(), "proof");
-        String notify_relay_url = srcIDSLInternalIp + ":" + transferServicePort + "/transfer/status/notify";
+        String notify_relay_url = srcIp + ":" + transferServicePort + "/transfer/status/notify";
         JSONObject relayTxStatus = restTemplate.postForObject(notify_relay_url, notifyRequest, JSONObject.class);
         log.info("4. [relay] {} tx status: {}", srcChainName, relayTxStatus.getString("msg"));
 
         // check relay chain tx status
-        String check_relay_url = srcIDSLInternalIp + ":" + transferServicePort + "/sync/status/check";
+        String check_relay_url = srcIp + ":" + transferServicePort + "/sync/status/check";
         JSONObject checkRes = restTemplate.postForObject(check_relay_url, null, JSONObject.class);
         log.info("5. [relay] check tx status: {}", checkRes.getString("msg"));
 
         // get relay tx status
-        String relay_tx_url = srcIDSLInternalIp + ":" + transferServicePort + "/sync/relay/status/relay";
+        String relay_tx_url = srcIp + ":" + transferServicePort + "/sync/relay/status/relay";
         JSONObject relayRes = restTemplate.getForObject(relay_tx_url, JSONObject.class);
         log.info("6. [relay] final tx status: {}", relayRes.getString("txStatus"));
 
