@@ -88,7 +88,7 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("3. send response: {}", sendRes.get("msg"));
 
         // notify status to relay chain to "prepare"
-        NotifyRequest notifyRequest = new NotifyRequest("txId", srcChainName, TxStatus.prepare.toString(), "proof");
+        NotifyRequest notifyRequest = new NotifyRequest("txId", srcChainName, "prepare", "proof");
         String notify_relay_url = srcIp + ":" + transferServicePort + "/transfer/status/notify";
         JSONObject relayTxStatus = restTemplate.postForObject(notify_relay_url, notifyRequest, JSONObject.class);
         log.info("4. [relay] {} tx status: {}", srcChainName, relayTxStatus.getString("msg"));
